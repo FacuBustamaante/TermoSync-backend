@@ -1,10 +1,7 @@
 import { fileURLToPath } from 'node:url';
-import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-
-dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 
 const app = express();
 app.use(express.json());
