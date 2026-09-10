@@ -1,16 +1,22 @@
+import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+
+dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-// 1. Conexión a MongoDB (Usa la variable de Railway o localhost)
-const mongoURI = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/clima_db';
-mongoose.connect(mongoURI)
-  .then(() => console.log('Conectado a MongoDB exitosamente'))
-  .catch(err => console.error('Error conectando a MongoDB:', err));
+// 1. Conexión a MongoDB de Railway
+const mongoURI = process.env.MONGO_URL;
+
+if (!mongoURI) {
+        console.error('Falta la variable de entorno MONGO_URL.');
+        process.exit(1);
+}
 
 // 2. Esquema y Modelo de Mongoose
 const sensorSchema = new mongoose.Schema({
@@ -75,6 +81,15 @@ app.get('/api/sensor/historial', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
-});
+
+mongoose.connect(mongoURI)
+    .then(() => {
+        console.log('Conectado a MongoDB de Railway exitosamente');
+        app.listen(PORT, '0.0.0.0', () => {
+            console.log(`Servidor escuchando en el puerto ${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error('Error conectando a MongoDB de Railway:', error.message);
+        process.exit(1);
+    });
