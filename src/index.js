@@ -29,7 +29,7 @@ const Branch = mongoose.model('Branch', branchSchema);
 const telemetrySchema = new mongoose.Schema({
     deviceId: String,
     branchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch' },
-    timestamp: { type: Date, default: Date.now },
+    timestamp: { type: Date, default: Date.now, expires: '30d' },
     readings: [{
         address: String, // MAC del sensor DS18B20
         temp: Number     // Temperatura registrada
